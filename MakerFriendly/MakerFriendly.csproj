@@ -113,6 +113,7 @@
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Azure\EventHub\EventHubHelper.cs" />
     <Compile Include="I2C\BMP180.cs" />
     <Compile Include="I2C\I2CDevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

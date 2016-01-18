@@ -133,10 +133,6 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\IoTAiuto\IoTAiuto.csproj">
-      <Project>{0154a882-50f1-4538-967e-360363bf7755}</Project>
-      <Name>IoTAiuto</Name>
-    </ProjectReference>
     <ProjectReference Include="..\MakerFriendly\MakerFriendly.csproj">
       <Project>{a4f36c44-cbfc-490d-b494-9c9f87c7c1b4}</Project>
       <Name>MakerFriendly</Name>
