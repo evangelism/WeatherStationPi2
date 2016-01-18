@@ -1,23 +1,10 @@
-﻿using MakerFriendly.I2C;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading;
-using System.Threading.Tasks;
-using Windows.Devices.Enumeration;
-using Windows.Devices.I2c;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using MakerFriendly.Azure.EventHub;
+using MakerFriendly.I2C;
 
 namespace WeatherStationPi2
 {
@@ -29,21 +16,30 @@ namespace WeatherStationPi2
         }
 
         BMP180 sensor = new BMP180();
+        EventHubHelper EHub;
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
             await sensor.Init();
+            EHub = new EventHubHelper();
+            EHub.serviceNamespace = "weathercenter-ns";
+            EHub.hubName = "weatherhub";
+            EHub.deviceName = "shwarspi";
+            EHub.sharedAccessPolicyName = "all";
+            EHub.sharedAccessKey = "cFsp8GEvk/iRnjehSt/JBHjIyAV0lGVBWGJqAc9/IMw=";
 
             var timer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(1)
+                Interval = TimeSpan.FromSeconds(3)
             };
-            timer.Tick += (sender, o) =>
+            timer.Tick += async (sender, o) =>
             {
                 var temp = sensor.Temperature;
                 Debug.WriteLine("Temperature = " + temp);
                 TheTextBlock.Text = $"Temperature : {temp}°C";
+                await EHub.SendMessage(
+                    $"{{\"temperature\":\"{temp.ToString().Replace(',', '.')}\", \"source\":\"RPi2\", \"timewhen\":\"{DateTime.Now.ToString("o")}\"}}");
             };
             timer.Start();
         }
